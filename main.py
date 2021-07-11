@@ -23,12 +23,11 @@ def hello_world():
     return build_response("It's LightToDoApp!")
 
 
-@app.route("/task/new", methods=['POST'])
+@app.route("/tasks/new", methods=['POST'])
 def add_task():
     request_data = request.get_json()
 
-    services.add_to_list(request_data)
-    return build_response(status=HTTPStatus.NO_CONTENT)
+    return build_response(services.add_to_list(request_data))
 
 
 @app.route('/tasks/all')
@@ -37,19 +36,17 @@ def get_all_tasks():
     return build_response(services.get_all_tasks())
 
 
-@app.route('/task/status', methods=['GET'])
-def get_task_status():
+@app.route('/tasks/<int:id>', methods=['GET'])
+def get_task(id):
 
-    return build_response(services.get_task_status(request.args.get('name')))
+    return build_response(services.get_task(id))
 
 
-@app.route('/task/update', methods=['PUT'])
-def update_status():
+@app.route('/tasks/<int:id>', methods=['PUT'])
+def update_task(id):
     request_data = request.get_json()
-    task_name = request_data['name']
-    status = request_data['status']
 
-    return build_response(services.update_status(task_name, status))
+    return build_response(services.update_task(id, request_data))
     #
     # if respond_data is None:
     #     response = response_error(f"{{'error': 'Error updating task - {task_name},  {status}'}}", 400)
@@ -59,12 +56,10 @@ def update_status():
     # return response
 
 
-@app.route('/task/remove', methods=['DELETE'])
-def delete_task():
-    request_data = request.get_json()
-    task_name = request_data['name']
-
-    return build_response(services.delete_task(task_name))
+@app.route('/tasks/<int:id>', methods=['DELETE'])
+def delete_task(id):
+    services.delete_task(id)
+    return build_response(status=HTTPStatus.NO_CONTENT)
 
     # if respond_data is None:
     #     response = response_error(f"{{'error': 'Error deleting task - {task_name}'}}", 400)

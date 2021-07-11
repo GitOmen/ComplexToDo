@@ -23,26 +23,26 @@ def hello_world():
     return build_response("It's LightToDoApp!")
 
 
-@app.route("/tasks/new", methods=['POST'])
+@app.route("/tasks", methods=['POST'])
 def add_task():
     request_data = request.get_json()
 
     return build_response(services.add_to_list(request_data))
 
 
-@app.route('/tasks/all')
+@app.route('/tasks')
 def get_all_tasks():
 
     return build_response(services.get_all_tasks())
 
 
-@app.route('/tasks/<int:id>', methods=['GET'])
+@app.route('/tasks/<int:id>')
 def get_task(id):
 
     return build_response(services.get_task(id))
 
 
-@app.route('/tasks/<int:id>', methods=['PUT'])
+@app.route('/tasks/<int:id>', methods=['PATCH'])
 def update_task(id):
     request_data = request.get_json()
 

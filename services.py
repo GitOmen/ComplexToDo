@@ -18,7 +18,10 @@ class Task(Base):
     description = Column(TEXT(), nullable=True)
 
     def __repr__(self):
-        return f"Task('{self.name}', '{self.status}')"
+        return f"Task({self.to_dict()})"
+
+    def to_dict(self):
+        return {'id': self.id, 'name': self.name, 'status': self.status, 'description': self.description}
 
 
 # connection
@@ -31,17 +34,13 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 
 
-def task_to_dict(task:Task):
-    return {'id': task.id, 'name': task.name, 'status': task.status, 'description': task.description}
-
-
 def add_to_list(data):
     try:
         with Session.begin() as session:
             task = Task(**data)
             session.add(task)
             session.flush()
-            return task_to_dict(task)
+            return task.to_dict()
     except Exception as e:
         print('Error: ', e)
         return None
@@ -51,7 +50,7 @@ def get_all_tasks():
     try:
         with Session.begin() as session:
             tasks = session.query(Task).all()
-            return [task_to_dict(task) for task in tasks]
+            return [task.to_dict() for task in tasks]
     except Exception as e:
         print('Error: ', e)
         return None
@@ -61,7 +60,7 @@ def get_task(id):
     try:
         with Session.begin() as session:
             task = session.query(Task).filter(Task.id == id).first()
-            return task_to_dict(task)
+            return task.to_dict()
     except Exception as e:
         print('Error: ', e)
         return None
@@ -92,7 +91,7 @@ def update_task(id, data):
                 task.name = name
             if description is not None:
                 task.description = description
-            return task_to_dict(task)
+            return task.to_dict()
     except Exception as e:
         print('Error: ', e)
         return None

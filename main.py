@@ -38,35 +38,28 @@ def get_all_tasks():
 
 @app.route('/tasks/<int:id>')
 def get_task(id):
-
-    return build_response(services.get_task(id))
+    try:
+        return build_response(services.get_task(id))
+    except services.TaskDoesNotExistException as exc:
+        return build_response({'error': str(exc)}, HTTPStatus.NOT_FOUND)
 
 
 @app.route('/tasks/<int:id>', methods=['PATCH'])
 def update_task(id):
     request_data = request.get_json()
-
-    return build_response(services.update_task(id, request_data))
-    #
-    # if respond_data is None:
-    #     response = response_error(f"{{'error': 'Error updating task - {task_name},  {status}'}}", 400)
-    #     return response
-    #
-    # response = Response(json.dumps(respond_data), mimetype=MIME)
-    # return response
+    try:
+        return build_response(services.update_task(id, request_data))
+    except services.TaskDoesNotExistException as exc:
+        return build_response({'error': str(exc)}, HTTPStatus.NOT_FOUND)
 
 
 @app.route('/tasks/<int:id>', methods=['DELETE'])
 def delete_task(id):
-    services.delete_task(id)
-    return build_response(status=HTTPStatus.NO_CONTENT)
-
-    # if respond_data is None:
-    #     response = response_error(f"{{'error': 'Error deleting task - {task_name}'}}", 400)
-    #     return response
-    #
-    # response = Response(json.dumps(respond_data), mimetype=MIME)
-    # return response
+    try:
+        services.delete_task(id)
+        return build_response(status=HTTPStatus.NO_CONTENT)
+    except services.TaskDoesNotExistException as exc:
+        return build_response({'error': str(exc)}, HTTPStatus.NOT_FOUND)
 
 
 if __name__ == '__main__':

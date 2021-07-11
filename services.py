@@ -9,6 +9,11 @@ FINISHED = 'Finished'
 Base = declarative_base()
 
 
+class TaskDoesNotExistException(Exception):
+    def __init__(self, id):
+        super().__init__(f"Task with id '{id}' does not exist")
+
+
 class Task(Base):
     __tablename__ = 'tasks'
 
@@ -34,6 +39,13 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 
 
+def must_get_task(session, id):
+    task = session.query(Task).filter(Task.id == id).first()
+    if task is None:
+        raise TaskDoesNotExistException(id)
+    return task
+
+
 def add_to_list(data):
     try:
         with Session.begin() as session:
@@ -57,13 +69,9 @@ def get_all_tasks():
 
 
 def get_task(id):
-    try:
-        with Session.begin() as session:
-            task = session.query(Task).filter(Task.id == id).first()
-            return task.to_dict()
-    except Exception as e:
-        print('Error: ', e)
-        return None
+    with Session.begin() as session:
+        task = must_get_task(session, id)
+        return task.to_dict()
 
 
 def update_task(id, data):
@@ -82,25 +90,19 @@ def update_task(id, data):
         print("Invalid Status: " + status)
         return None
 
-    try:
-        with Session.begin() as session:
-            task = session.query(Task).filter(Task.id == id).first()
-            if status is not None:
-                task.status = status
-            if name is not None:
-                task.name = name
-            if description is not None:
-                task.description = description
-            return task.to_dict()
-    except Exception as e:
-        print('Error: ', e)
-        return None
+    with Session.begin() as session:
+        task = must_get_task(session, id)
+
+        if status is not None:
+            task.status = status
+        if name is not None:
+            task.name = name
+        if description is not None:
+            task.description = description
+        return task.to_dict()
 
 
 def delete_task(id):
-    try:
-        with Session.begin() as session:
-            session.query(Task).filter(Task.id == id).delete()
-    except Exception as e:
-        print('Error: ', e)
-        return None
+    with Session.begin() as session:
+        task = must_get_task(session, id)
+        session.delete(task)

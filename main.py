@@ -27,7 +27,7 @@ def hello_world():
 def add_task():
     request_data = request.get_json()
 
-    return build_response(services.add_to_list(request_data))
+    return build_response(services.add_task(request_data))
 
 
 @app.route('/tasks')

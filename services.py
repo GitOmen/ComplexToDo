@@ -46,26 +46,18 @@ def must_get_task(session, id):
     return task
 
 
-def add_to_list(data):
-    try:
-        with Session.begin() as session:
-            task = Task(**data)
-            session.add(task)
-            session.flush()
-            return task.to_dict()
-    except Exception as e:
-        print('Error: ', e)
-        return None
+def add_task(data):
+    with Session.begin() as session:
+        task = Task(**data)
+        session.add(task)
+        session.flush()
+        return task.to_dict()
 
 
 def get_all_tasks():
-    try:
-        with Session.begin() as session:
-            tasks = session.query(Task).all()
-            return [task.to_dict() for task in tasks]
-    except Exception as e:
-        print('Error: ', e)
-        return None
+    with Session.begin() as session:
+        tasks = session.query(Task).all()
+        return [task.to_dict() for task in tasks]
 
 
 def get_task(id):

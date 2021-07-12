@@ -1,12 +1,21 @@
+from enum import Enum
+
 from sqlalchemy import Column, TEXT, create_engine, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-SCHEDULED = 'Scheduled'
-INPROGRESS = 'In Progress'
-FINISHED = 'Finished'
-
 Base = declarative_base()
+
+
+class Status(Enum):
+    SCHEDULED = 'SCHEDULED'
+    IN_PROGRESS = 'IN_PROGRESS'
+    FINISHED = 'FINISHED'
+
+
+class InvalidStatusException(Exception):
+    def __init__(self, status):
+        super().__init__(f"Status '{status}' is invalid")
 
 
 class TaskDoesNotExistException(Exception):
@@ -19,7 +28,7 @@ class Task(Base):
 
     id = Column(Integer(), primary_key=True, nullable=False)
     name = Column(TEXT(), nullable=False)
-    status = Column(TEXT(), nullable=False, default=SCHEDULED)
+    status = Column(TEXT(), nullable=False, default=Status.SCHEDULED.value)
     description = Column(TEXT(), nullable=True)
 
     def __repr__(self):
@@ -46,7 +55,17 @@ def must_get_task(session, id):
     return task
 
 
+def parse_status(s):
+    if s is None:
+        return None
+    try:
+        return Status(s)
+    except ValueError:
+        raise InvalidStatusException(s)
+
+
 def add_task(data):
+    parse_status(data.get('status'))
     with Session.begin() as session:
         task = Task(**data)
         session.add(task)
@@ -67,26 +86,15 @@ def get_task(id):
 
 
 def update_task(id, data):
-    status = data.get('status')
+    status = parse_status(data.get('status'))
     name = data.get('name')
     description = data.get('description')
-    if status is None:
-        pass
-    elif status.lower().strip() == 'scheduled':
-        status = SCHEDULED
-    elif status.lower().strip() == 'in progress':
-        status = INPROGRESS
-    elif status.lower().strip() == 'finished':
-        status = FINISHED
-    else:
-        print("Invalid Status: " + status)
-        return None
 
     with Session.begin() as session:
         task = must_get_task(session, id)
 
         if status is not None:
-            task.status = status
+            task.status = status.value
         if name is not None:
             task.name = name
         if description is not None:

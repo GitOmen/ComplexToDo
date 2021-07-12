@@ -26,8 +26,10 @@ def hello_world():
 @app.route("/tasks", methods=['POST'])
 def add_task():
     request_data = request.get_json()
-
-    return build_response(services.add_task(request_data))
+    try:
+        return build_response(services.add_task(request_data))
+    except services.InvalidStatusException as exc:
+        return build_response({'error': str(exc)}, HTTPStatus.BAD_REQUEST)
 
 
 @app.route('/tasks')
@@ -51,6 +53,8 @@ def update_task(id):
         return build_response(services.update_task(id, request_data))
     except services.TaskDoesNotExistException as exc:
         return build_response({'error': str(exc)}, HTTPStatus.NOT_FOUND)
+    except services.InvalidStatusException as exc:
+        return build_response({'error': str(exc)}, HTTPStatus.BAD_REQUEST)
 
 
 @app.route('/tasks/<int:id>', methods=['DELETE'])

@@ -1,32 +1,29 @@
 # LightToDoApp
 
-This is a LightToDoApp created with following technologies: 
+This is a simple to-do app created with following technologies: 
  
- - ```python3.9```
- - ```Flask```
- - ```SQLAlchemy```
+ - Python 3.9
+ - Flask 2.0
+ - SQLAlchemy 1.4
 
-Currently it lacks front end but backend is mostly finished.
+Currently it lacks frontend but backend is mostly finished.
+
 ## Features
 
-For now, most common ones such as:
+Basic operations on tasks:
 
-- Adding ```task``` to database
-- Getting all ```task```'s from database
-- Getting   ```task``` ```status``` by it's name from database
-- Specified ```task``` ```status``` updating in database
-- Removing specified ```task``` from database
+- Adding
+- Getting all
+- Getting one
+- Updating
+- Deleting
 
-## Upcoming Features
+## Planned Features
 
-- Clear whole list of ```tasks```
-- Remove multiple ```task```'s at once
-- Change multiple ```task```'s status
-- User authentication for multiple user accounts
-
-**Web GUI:**
-
-- Set ```task``` start time using calendar and end time (each optional)
-- Set notifications about upcoming ```tasks``` using browser notification system (optional)
-- Automatic ```status``` changing when ```task``` is Finished or begins
-- Other QoL small ideas
+- Clear whole list of tasks
+- Remove multiple tasks at once
+- Change multiple task status at once
+- Support for multiple users
+- Set task start/end time using calendar (both optional)
+- Notifications about upcoming tasks using browser notification system (optional)
+- Automatic status change when task is finished or started

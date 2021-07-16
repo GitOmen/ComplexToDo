@@ -5,8 +5,8 @@ This is a simple to-do app created with following technologies:
  - Python 3.9
  - Flask 2.0
  - SQLAlchemy 1.4
-
-Currently it lacks frontend but backend is mostly finished.
+ - React 17.0
+ - Bootstrap 5.0
 
 ## Features
 

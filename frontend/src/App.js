@@ -1,37 +1,22 @@
+import React, { Component } from 'react';
 import './App.css';
-import {Component} from "react";
+import Home from './Home';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import TaskList from './TaskList';
+import TaskEdit from "./TaskEdit";
 
 class App extends Component {
-  state = {
-    tasks: []
-  };
-
-  async componentDidMount() {
-    const response = await fetch('http://127.0.0.1:5000/tasks');
-    const body = await response.json();
-    this.setState({tasks: body});
-  }
-
   render() {
-    const {tasks} = this.state;
     return (
-        <div className="App">
-          <header className="App-header">
-            <div className="App-intro">
-              <h2>Tasks</h2>
-              {tasks.map(task =>
-                  <div key={task.id}>
-                    <hr/>
-                    {task.name} ({task.status})
-                    <p>
-                      {task.description}
-                    </p>
-                  </div>
-              )}
-            </div>
-          </header>
-        </div>
-    );
+        <Router>
+          <Switch>
+            <Route path='/' exact={true} component={Home}/>
+            <Route path='/tasks' exact={true} component={TaskList}/>
+            <Route path='/tasks/:id' component={TaskEdit}/>
+          </Switch>
+        </Router>
+    )
   }
 }
+
 export default App;

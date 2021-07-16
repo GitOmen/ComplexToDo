@@ -12,6 +12,15 @@ class Status(Enum):
     IN_PROGRESS = 'IN_PROGRESS'
     FINISHED = 'FINISHED'
 
+    @classmethod
+    def parse(cls, s):
+        if s is None:
+            return None
+        try:
+            return Status(s)
+        except ValueError:
+            raise InvalidStatusException(s)
+
 
 class InvalidStatusException(Exception):
     def __init__(self, status):
@@ -38,34 +47,22 @@ class Task(Base):
         return {'id': self.id, 'name': self.name, 'status': self.status, 'description': self.description}
 
 
-# connection
 engine = create_engine('sqlite:///data.db')
 
-# create metadata
 Base.metadata.create_all(engine)
 
-# create session
 Session = sessionmaker(bind=engine)
 
 
-def must_get_task(session, id):
+def _fetch_task(session, id):
     task = session.query(Task).filter(Task.id == id).first()
     if task is None:
         raise TaskDoesNotExistException(id)
     return task
 
 
-def parse_status(s):
-    if s is None:
-        return None
-    try:
-        return Status(s)
-    except ValueError:
-        raise InvalidStatusException(s)
-
-
 def add_task(data):
-    parse_status(data.get('status'))
+    Status.parse(data.get('status'))
     with Session.begin() as session:
         task = Task(**data)
         session.add(task)
@@ -81,28 +78,24 @@ def get_all_tasks():
 
 def get_task(id):
     with Session.begin() as session:
-        task = must_get_task(session, id)
+        task = _fetch_task(session, id)
         return task.to_dict()
 
 
 def update_task(id, data):
-    status = parse_status(data.get('status'))
-    name = data.get('name')
-    description = data.get('description')
-
     with Session.begin() as session:
-        task = must_get_task(session, id)
+        task = _fetch_task(session, id)
 
-        if status is not None:
+        if status := Status.parse(data.get('status')):
             task.status = status.value
-        if name is not None:
+        if name := data.get('name'):
             task.name = name
-        if description is not None:
+        if description := data.get('description'):
             task.description = description
         return task.to_dict()
 
 
 def delete_task(id):
     with Session.begin() as session:
-        task = must_get_task(session, id)
+        task = _fetch_task(session, id)
         session.delete(task)

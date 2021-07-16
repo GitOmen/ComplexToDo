@@ -5,17 +5,14 @@ from flask import Flask, Response, request
 
 import services
 
-MIME = 'application/json'
-
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 
 
 def build_response(body=None, status=HTTPStatus.OK):
     response = ''
     if body is not None:
         response = json.dumps(body)
-    return Response(response, status=status, mimetype=MIME)
+    return Response(response, status=status, mimetype='application/json')
 
 
 @app.errorhandler(services.TaskDoesNotExistException)

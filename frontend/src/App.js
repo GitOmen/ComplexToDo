@@ -1,25 +1,37 @@
-import logo from './logo.svg';
 import './App.css';
+import {Component} from "react";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  state = {
+    tasks: []
+  };
+
+  async componentDidMount() {
+    const response = await fetch('http://127.0.0.1:5000/tasks');
+    const body = await response.json();
+    this.setState({tasks: body});
+  }
+
+  render() {
+    const {tasks} = this.state;
+    return (
+        <div className="App">
+          <header className="App-header">
+            <div className="App-intro">
+              <h2>Tasks</h2>
+              {tasks.map(task =>
+                  <div key={task.id}>
+                    <hr/>
+                    {task.name} ({task.status})
+                    <p>
+                      {task.description}
+                    </p>
+                  </div>
+              )}
+            </div>
+          </header>
+        </div>
+    );
+  }
 }
-
 export default App;

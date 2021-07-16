@@ -15,6 +15,13 @@ def build_response(body=None, status=HTTPStatus.OK):
     return Response(response, status=status, mimetype='application/json')
 
 
+@app.after_request
+def after_request(response):
+    header = response.headers
+    header['Access-Control-Allow-Origin'] = '*'
+    return response
+
+
 @app.errorhandler(services.TaskDoesNotExistException)
 def handle_task_does_not_exist(exc):
     return build_response({'error': str(exc)}, HTTPStatus.NOT_FOUND)

@@ -1,5 +1,1 @@
-/templates/
-/venv/
-/data.db
-/run_flask_app.bat
-/.idea/
+.idea

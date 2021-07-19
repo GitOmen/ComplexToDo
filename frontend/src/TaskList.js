@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
-import {Button, ButtonGroup, Container, Table} from 'reactstrap';
+import {Button, Container} from 'reactstrap';
 import AppNavbar from './AppNavbar';
 import {Link} from 'react-router-dom';
 import {fetchAllTasks, removeTask} from "./services";
+import Task from "./Task";
 
 class TaskList extends Component {
 
@@ -30,41 +31,15 @@ class TaskList extends Component {
             return <p>Loading...</p>;
         }
 
-        const taskList = tasks.map(task => {
-            return <tr key={task.id}>
-                <td style={{whiteSpace: 'nowrap'}}>{task.name}</td>
-                <td>{task.status}</td>
-                <td>{task.description}</td>
-                <td>
-                    <ButtonGroup>
-                        <Button size="sm" color="primary" tag={Link} to={"/tasks/" + task.id}>Edit</Button>
-                        <Button size="sm" color="danger" onClick={() => this.remove(task.id)}>Delete</Button>
-                    </ButtonGroup>
-                </td>
-            </tr>
-        });
-
         return (
             <div>
                 <AppNavbar/>
-                <Container fluid>
+                <Container>
                     <div className="float-right">
                         <Button color="success" tag={Link} to="/tasks/new">Add Task</Button>
                     </div>
                     <h3>Tasks</h3>
-                    <Table className="mt-4">
-                        <thead>
-                        <tr>
-                            <th width="20%">Name</th>
-                            <th width="20%">Status</th>
-                            <th width="20%">Description</th>
-                            <th width="40%">Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {taskList}
-                        </tbody>
-                    </Table>
+                    {tasks.map(task => <Task task={task}/>)}
                 </Container>
             </div>
         );

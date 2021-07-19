@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Link, withRouter} from 'react-router-dom';
 import {Button, Container, Form, FormGroup, Input, Label} from 'reactstrap';
 import AppNavbar from './AppNavbar';
+import {createTask, fetchTask, updateTask} from "./services";
 
 class TaskEdit extends Component {
 
@@ -22,7 +23,7 @@ class TaskEdit extends Component {
 
     async componentDidMount() {
         if (this.props.match.params.id !== 'new') {
-            const task = await (await fetch(`http://127.0.0.1:5000/tasks/${this.props.match.params.id}`)).json();
+            const task = await fetchTask(this.props.match.params.id);
             this.setState({item: task});
         }
     }
@@ -39,15 +40,11 @@ class TaskEdit extends Component {
     async handleSubmit(event) {
         event.preventDefault();
         const {item} = this.state;
-
-        await fetch('http://127.0.0.1:5000/tasks' + (item.id ? '/' + item.id : ''), {
-            method: (item.id) ? 'PATCH' : 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(item),
-        });
+        if (item.id) {
+            await updateTask(item);
+        } else {
+            await createTask(item);
+        }
         this.props.history.push('/tasks');
     }
 

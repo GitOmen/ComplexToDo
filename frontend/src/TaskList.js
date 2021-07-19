@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Button, ButtonGroup, Container, Table} from 'reactstrap';
 import AppNavbar from './AppNavbar';
 import {Link} from 'react-router-dom';
+import {fetchAllTasks, removeTask} from "./services";
 
 class TaskList extends Component {
 
@@ -12,19 +13,11 @@ class TaskList extends Component {
     }
 
     componentDidMount() {
-        fetch('http://127.0.0.1:5000/tasks')
-            .then(response => response.json())
-            .then(data => this.setState({tasks: data}));
+        fetchAllTasks().then(data => this.setState({tasks: data}));
     }
 
     async remove(id) {
-        await fetch(`http://127.0.0.1:5000/tasks/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        }).then(() => {
+        await removeTask(id).then(() => {
             let updatedTasks = [...this.state.tasks].filter(i => i.id !== id);
             this.setState({tasks: updatedTasks});
         });

@@ -5,7 +5,7 @@ import {STATUSES} from "./services";
 
 class Task extends Component {
     render() {
-        const {task} = this.props;
+        const {task, onRemove} = this.props;
         return <Card className="m-1" outline color="secondary">
             <CardBody>
                 <CardTitle tag="h5">{task.name}</CardTitle>
@@ -13,7 +13,7 @@ class Task extends Component {
                 <CardText style={{whiteSpace: "pre-line"}}>{task.description}</CardText>
                 <Button size="sm" outline color="primary" tag={Link} to={"/tasks/" + task.id}>Edit</Button>
                 {' '}
-                <Button size="sm" color="danger" onClick={() => this.remove(task.id)}>Delete</Button>
+                <Button size="sm" color="danger" onClick={() => onRemove(task.id)}>Delete</Button>
             </CardBody>
         </Card>
     }

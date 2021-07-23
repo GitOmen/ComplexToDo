@@ -39,7 +39,7 @@ class TaskList extends Component {
                         <Button color="success" tag={Link} to="/tasks/new">Add Task</Button>
                     </div>
                     <h3>Tasks</h3>
-                    {tasks.map(task => <Task task={task} key={task.id}/>)}
+                    {tasks.map(task => <Task task={task} key={task.id} onRemove={this.remove}/>)}
                 </Container>
             </div>
         );

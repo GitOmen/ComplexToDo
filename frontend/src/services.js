@@ -1,5 +1,7 @@
 const API_URL = 'http://127.0.0.1:5000'
 
+export const DEFAULT_STATUS = "SCHEDULED"
+
 export const STATUSES = {
     SCHEDULED: "Scheduled",
     IN_PROGRESS: "In Progress",

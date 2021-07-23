@@ -4,13 +4,13 @@ import {Link, withRouter} from 'react-router-dom';
 import {Button, Container, Form, FormGroup, Input, Label} from 'reactstrap';
 import AppNavbar from './AppNavbar';
 import TextareaAutosize from 'react-textarea-autosize';
-import {createTask, fetchTask, STATUSES, updateTask} from "./services";
+import {createTask, DEFAULT_STATUS, fetchTask, STATUSES, updateTask} from "./services";
 
 class TaskEdit extends Component {
 
     emptyItem = {
         name: '',
-        status: '',
+        status: DEFAULT_STATUS,
         description: ''
     };
 
@@ -66,13 +66,11 @@ class TaskEdit extends Component {
                     </FormGroup>
                     <FormGroup>
                         <Label for="status">Status</Label>
-                        <Input type="select" name="status" id="status" onChange={this.handleChange}>
+                        <Input type="select" name="status" id="status" value={item.status}
+                               onChange={this.handleChange}>
                             {Object.entries(STATUSES).map(
                                 ([status_value, status_name]) =>
-                                    <option
-                                        selected={item.status === status_value}
-                                        value={status_value}
-                                    >{status_name}</option>
+                                    <option value={status_value} key={status_value}>{status_name}</option>
                             )}
                         </Input>
                     </FormGroup>

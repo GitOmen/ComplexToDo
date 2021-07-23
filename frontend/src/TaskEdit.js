@@ -69,7 +69,7 @@ class TaskEdit extends Component {
                     </FormGroup>
                     <FormGroup>
                         <Label for="description">Description</Label>
-                        <Input type="text" name="description" id="description" value={item.description || ''}
+                        <Input type="textarea" name="description" id="description" value={item.description || ''}
                                onChange={this.handleChange} autoComplete="description"/>
                     </FormGroup>
                     <FormGroup>

@@ -5,6 +5,7 @@ This is a simple to-do app created with following technologies:
  - Python 3.9
  - Flask 2.0
  - SQLAlchemy 1.4
+ - JavaScript (ECMAScript 6)
  - React 17.0
  - Bootstrap 5.0
 

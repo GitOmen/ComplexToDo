@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
+import './TaskEdit.css'
 import {Link, withRouter} from 'react-router-dom';
 import {Button, Container, Form, FormGroup, Input, Label} from 'reactstrap';
 import AppNavbar from './AppNavbar';
+import TextareaAutosize from 'react-textarea-autosize';
 import {createTask, fetchTask, STATUSES, updateTask} from "./services";
 
 class TaskEdit extends Component {
@@ -76,8 +78,8 @@ class TaskEdit extends Component {
                     </FormGroup>
                     <FormGroup>
                         <Label for="description">Description</Label>
-                        <Input type="textarea" name="description" id="description" value={item.description || ''}
-                               onChange={this.handleChange}/>
+                        <TextareaAutosize name="description" id="description" value={item.description || ''}
+                                          onChange={this.handleChange}/>
                     </FormGroup>
                     <FormGroup>
                         <Button color="primary" type="submit">Save</Button>{' '}

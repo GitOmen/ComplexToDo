@@ -1,4 +1,10 @@
-const API_URL='http://127.0.0.1:5000'
+const API_URL = 'http://127.0.0.1:5000'
+
+export const STATUSES = {
+    SCHEDULED: "Scheduled",
+    IN_PROGRESS: "In Progress",
+    FINISHED: "Finished"
+}
 
 export async function fetchTask(id) {
     return await (await fetch(`${API_URL}/tasks/${id}`)).json();

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Link, withRouter} from 'react-router-dom';
 import {Button, Container, Form, FormGroup, Input, Label} from 'reactstrap';
 import AppNavbar from './AppNavbar';
-import {createTask, fetchTask, updateTask} from "./services";
+import {createTask, fetchTask, STATUSES, updateTask} from "./services";
 
 class TaskEdit extends Component {
 
@@ -60,17 +60,24 @@ class TaskEdit extends Component {
                     <FormGroup>
                         <Label for="name">Name</Label>
                         <Input type="text" name="name" id="name" value={item.name || ''}
-                               onChange={this.handleChange} autoComplete="name"/>
+                               onChange={this.handleChange}/>
                     </FormGroup>
                     <FormGroup>
                         <Label for="status">Status</Label>
-                        <Input type="text" name="status" id="status" value={item.status || ''}
-                               onChange={this.handleChange} autoComplete="status"/>
+                        <Input type="select" name="status" id="status" onChange={this.handleChange}>
+                            {Object.entries(STATUSES).map(
+                                ([status_value, status_name]) =>
+                                    <option
+                                        selected={item.status === status_value}
+                                        value={status_value}
+                                    >{status_name}</option>
+                            )}
+                        </Input>
                     </FormGroup>
                     <FormGroup>
                         <Label for="description">Description</Label>
                         <Input type="textarea" name="description" id="description" value={item.description || ''}
-                               onChange={this.handleChange} autoComplete="description"/>
+                               onChange={this.handleChange}/>
                     </FormGroup>
                     <FormGroup>
                         <Button color="primary" type="submit">Save</Button>{' '}

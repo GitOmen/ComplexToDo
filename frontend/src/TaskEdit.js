@@ -4,30 +4,38 @@ import {Link, withRouter} from 'react-router-dom';
 import {Button, Container, Form, FormGroup, Input, Label} from 'reactstrap';
 import AppNavbar from './AppNavbar';
 import TextareaAutosize from 'react-textarea-autosize';
-import {createTask, DEFAULT_STATUS, fetchTask, STATUSES, updateTask} from "./services";
+import {createTask, DEFAULT_STATUS, fetchAllTaskLists, fetchTask, STATUSES, updateTask} from "./services";
 
 class TaskEdit extends Component {
-
-    emptyItem = {
-        name: '',
-        status: DEFAULT_STATUS,
-        description: ''
-    };
 
     constructor(props) {
         super(props);
         this.state = {
-            item: this.emptyItem
+            item: {
+                name: '',
+                status: DEFAULT_STATUS,
+                description: '',
+                list_id: this.props.match.params.listId,
+            },
+            lists: []
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     async componentDidMount() {
-        if (this.props.match.params.id !== 'new') {
-            const task = await fetchTask(this.props.match.params.id);
-            this.setState({item: task});
+        if (this.props.match.params.taskId !== 'new') {
+            const task = await fetchTask(this.props.match.params.taskId);
+            const item = {
+                id: task.id,
+                name: task.name,
+                status: task.status,
+                list_id: task.list.id,
+                description: task.description
+            }
+            this.setState({item});
         }
+        this.setState({lists: await fetchAllTaskLists()})
     }
 
     handleChange(event) {
@@ -42,17 +50,25 @@ class TaskEdit extends Component {
     async handleSubmit(event) {
         event.preventDefault();
         const {item} = this.state;
+        if (!item.list_id) {
+            return;
+        }
         if (item.id) {
             await updateTask(item);
         } else {
             await createTask(item);
         }
-        this.props.history.push('/tasks');
+        if (this.props.match.params.listId) {
+            this.props.history.push(`/lists/${this.props.match.params.listId}`);
+        } else {
+            this.props.history.push('/tasks');
+        }
     }
 
     render() {
-        const {item} = this.state;
+        const {item, lists} = this.state;
         const title = <h2>{item.id ? 'Edit Task' : 'Add Task'}</h2>;
+        const listId = this.props.match.params.listId;
 
         return <div>
             <AppNavbar/>
@@ -75,13 +91,23 @@ class TaskEdit extends Component {
                         </Input>
                     </FormGroup>
                     <FormGroup>
+                        <Label for="list_id">List</Label>
+                        <Input type="select" name="list_id" id="list_id" value={item.list_id || ''}
+                               onChange={this.handleChange}>
+                            <option value={''} hidden/>
+                            {lists.map((task_list) =>
+                                <option value={task_list.id} key={task_list.id}>{task_list.name}</option>
+                            )}
+                        </Input>
+                    </FormGroup>
+                    <FormGroup>
                         <Label for="description">Description</Label>
                         <TextareaAutosize name="description" id="description" value={item.description || ''}
                                           onChange={this.handleChange}/>
                     </FormGroup>
                     <FormGroup>
                         <Button color="primary" type="submit">Save</Button>{' '}
-                        <Button color="secondary" tag={Link} to="/tasks">Cancel</Button>
+                        <Button color="secondary" tag={Link} to={listId ? `/lists/${listId}` : "/tasks"}>Cancel</Button>
                     </FormGroup>
                 </Form>
             </Container>

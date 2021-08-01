@@ -28,6 +28,11 @@ def handle_task_does_not_exist(exc):
     return build_response({'error': str(exc)}, HTTPStatus.NOT_FOUND)
 
 
+@app.errorhandler(services.TaskListDoesNotExistException)
+def handle_task_list_does_not_exist(exc):
+    return build_response({'error': str(exc)}, HTTPStatus.NOT_FOUND)
+
+
 @app.errorhandler(services.InvalidStatusException)
 def handle_invalid_status(exc):
     return build_response({'error': str(exc)}, HTTPStatus.BAD_REQUEST)
@@ -64,6 +69,39 @@ def update_task(id):
 def delete_task(id):
     services.delete_task(id)
     return build_response(status=HTTPStatus.NO_CONTENT)
+
+
+@app.route("/lists", methods=['POST'])
+def add_list():
+    request_data = request.get_json()
+    return build_response(services.add_task_list(request_data))
+
+
+@app.route('/lists')
+def get_all_lists():
+    return build_response(services.get_all_task_lists())
+
+
+@app.route('/lists/<int:id>')
+def get_list(id):
+    return build_response(services.get_task_list(id))
+
+
+@app.route('/lists/<int:id>', methods=['PATCH'])
+def update_task_list(id):
+    request_data = request.get_json()
+    return build_response(services.update_task_list(id, request_data))
+
+
+@app.route('/lists/<int:id>', methods=['DELETE'])
+def delete_task_list(id):
+    services.delete_task_list(id)
+    return build_response(status=HTTPStatus.NO_CONTENT)
+
+
+@app.route('/lists/<int:id>/tasks')
+def get_list_tasks(id):
+    return build_response(services.get_all_tasks(id))
 
 
 if __name__ == '__main__':

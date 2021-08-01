@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Button, Container} from 'reactstrap';
 import AppNavbar from './AppNavbar';
 import {Link} from 'react-router-dom';
-import {fetchAllTasks, removeTask} from "./services";
+import {fetchAllTasks, fetchTaskList, fetchTaskListTasks, removeTask, removeTaskList} from "./services";
 import Task from "./Task";
 
 class TaskList extends Component {
@@ -14,8 +14,14 @@ class TaskList extends Component {
     }
 
     componentDidMount() {
-        fetchAllTasks().then(data => this.setState({tasks: data}));
+        if (this.props.match.params.id) {
+            fetchTaskListTasks(this.props.match.params.id).then(data => this.setState({tasks: data}));
+            fetchTaskList(this.props.match.params.id).then(data => this.setState({list: data}));
+        } else {
+            fetchAllTasks().then(data => this.setState({tasks: data}));
+        }
     }
+
 
     async remove(id) {
         await removeTask(id).then(() => {
@@ -24,9 +30,14 @@ class TaskList extends Component {
         });
     }
 
-    render() {
-        const {tasks, isLoading} = this.state;
+    async removeTaskList(id) {
+        await removeTaskList(id);
+        this.props.history.push('/');
+    }
 
+
+    render() {
+        const {list, tasks, isLoading} = this.state;
         if (isLoading) {
             return <p>Loading...</p>;
         }
@@ -36,10 +47,17 @@ class TaskList extends Component {
                 <AppNavbar/>
                 <Container>
                     <div className="float-right">
-                        <Button color="success" tag={Link} to="/tasks/new">Add Task</Button>
+                        <Button
+                            color="success" tag={Link} to={(list ? `/lists/${list.id}` : '') + "/tasks/new"}>Add Task
+                        </Button>
                     </div>
-                    <h3>Tasks</h3>
-                    {tasks.map(task => <Task task={task} key={task.id} onRemove={this.remove}/>)}
+                    <h3>{list ? list.name : "All Tasks"}</h3>
+                    {list ? <>
+                        <Button outline color="primary" tag={Link} to={`/lists/${list.id}/edit`}>Edit</Button>
+                        <Button size="sm" color="danger" onClick={() => this.removeTaskList(list.id)}>Delete</Button>
+                    </> : null}
+                    {tasks.map(task => <Task task={task} key={task.id} listId={list ? list.id : null}
+                                             onRemove={this.remove}/>)}
                 </Container>
             </div>
         );

@@ -11,20 +11,14 @@ This is a simple to-do app created with following technologies:
 
 ## Features
 
-Basic operations on tasks:
-
-- Adding
-- Getting all
-- Getting one
-- Updating
-- Deleting
+- CRUD operations on tasks
+- Multiple lists of tasks
 
 ## Planned Features
 
-- Clear whole list of tasks
-- Remove multiple tasks at once
-- Change multiple task status at once
-- Support for multiple users
 - Set task start/end time using calendar (both optional)
+- Filtering and sorting tasks
+- Mark specified tasks as important
+- Expand long task description on task click
 - Notifications about upcoming tasks using browser notification system (optional)
-- Automatic status change when task is finished or started
+- Support for multiple users
